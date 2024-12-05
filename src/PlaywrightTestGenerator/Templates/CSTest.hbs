@@ -1,0 +1,55 @@
+using Microsoft.Playwright.NUnit;
+using NUnit.Framework;
+
+namespace {{ns}}
+{
+    [TestFixture]
+    public class {{pageName}}Tests : PageTest
+    {
+        private IPage _page;
+
+        [SetUp]
+        public async Task SetUp()
+        {
+            _page = await Context.NewPageAsync();
+            await _page.GotoAsync("{{baseUrl}}");
+        }
+
+{{#each elements}}
+        private ILocator {{name}} => _page.Locator("{{selector}}");
+{{/each}}
+
+{{#each testCases}}
+        [Test]
+{{#each tags}}
+        [{{.}}]
+{{/each}}
+        public async Task {{name}}()
+        {
+            // Setup
+{{#each setup}}
+{{#if description}}// {{description}}{{/if}}
+            await {{elementName}}.{{action}}({{#each parameters}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}});
+{{/each}}
+
+            // Test steps
+{{#each steps}}
+{{#if description}}// {{description}}{{/if}}
+            await {{elementName}}.{{action}}({{#each parameters}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}});
+{{/each}}
+
+            // Assertions
+{{#each assertions}}
+{{#if description}}// {{description}}{{/if}}
+            await Expect({{elementName}}).{{action}}({{#each parameters}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}});
+{{/each}}
+
+            // Cleanup
+{{#each cleanup}}
+{{#if description}}// {{description}}{{/if}}
+            await {{elementName}}.{{action}}({{#each parameters}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}});
+{{/each}}
+        }
+{{/each}}
+    }
+}
